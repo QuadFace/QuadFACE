@@ -1,22 +1,31 @@
-#include <I2Cdev.h>
 
 #include <helper_3dmath.h>
+
+
 #include <Servo.h>
 #include <EEPROM.h>
 
 
-/// I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
+// I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"
 
 #include "MPU6050_6Axis_MotionApps20.h"
-#include "MPU6050.h" // not necessary if using MotionApps include file
+//#include "MPU6050.h" // not necessary if using MotionApps include file
 
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
 // is used in I2Cdev.h
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     #include "Wire.h"
 #endif
+
+// class default I2C address is 0x68
+// specific I2C addresses may be passed as a parameter here
+// AD0 low = 0x68 (default for SparkFun breakout and InvenSense evaluation board)
+// AD0 high = 0x69
+MPU6050 mpu;
+//MPU6050 mpu(0x69); // <-- use for AD0 high
+
 
 
 
@@ -66,6 +75,7 @@ bool blinkState = false;
 /*
 {1,1}      Failed to initialize MPU
 {1,1,1} failed to initialize DMP
+
 */
 
 
@@ -114,19 +124,18 @@ const float calibrationPercision = 0.1;  //must be positive
 Your offsets:  -4592 -537  700 -1214 -18 0
 -4550 -523  753 -1269 -23 -2
 -4548 -526  751 -1267 -22 -2
+
+
+
 Data is printed as: acelX acelY acelZ giroX giroY giroZ
+
 */
 
 
 
 
 
-// class default I2C address is 0x68
-// specific I2C addresses may be passed as a parameter here
-// AD0 low = 0x68 (default for SparkFun breakout and InvenSense evaluation board)
-// AD0 high = 0x69
-MPU6050 mpu;
-//MPU6050 mpu(0x69); // <-- use for AD0 high
+
 
 
 
@@ -280,7 +289,7 @@ void loop() {
   
     newData=getYawPitchRoll(&ypr[0]); //fill acceleration array, and return if we got new data
     
-    
+    throttle=900;    
    
     
     
@@ -879,4 +888,6 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
 {
  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
+ 
 
